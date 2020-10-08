@@ -174,7 +174,7 @@ make manifests
 
 This command generates the webhook manifests and enables the deployment. The webhook configurations created can be found in `config/webhook/manifests.yaml`
 
-The webhook server accepts only those webhook configurations that provide a valid `caBundle` value. The below steps are required to setup a certificate manager, create a self signed certificate that and to do a ca-injection into the webhook configurations. 
+The webhook server accepts only those webhook configurations that provide a valid `caBundle` value. The below steps are required to setup a certificate manager, create a self signed certificate and to do a ca-injection into the webhook configurations. 
 
 To enable cert-manager and webhook deployments, you will have to modify the file `config/default/kustomization.yaml` by uncommenting the `[WEBHOOK]` and `[CERTMANAGER]`. Your file should look like below :
 
