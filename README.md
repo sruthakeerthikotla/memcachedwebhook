@@ -66,6 +66,7 @@ Here the "--defaulting" option adds a provision for mutating webhook while "--pr
 
 The actual webhook logic can be found in the file `api/v1/memcached_webhook.go` . The contents of the file are below :
 
+
 ```
 /*
 
@@ -176,6 +177,7 @@ This command generates the webhook manifests and enables the deployment. The web
 The webhook server accepts only those webhook configurations that provide a valid `caBundle` value. The below steps are required to setup a certificate manager, create a self signed certificate that and to do a ca-injection into the webhook configurations. 
 
 To enable cert-manager and webhook deployments, you will have to modify the file `config/default/kustomization.yaml` by uncommenting the `[WEBHOOK]` and `[CERTMANAGER]`. Your file should look like below :
+
 
 ```
 # Adds namespace to all resources.
