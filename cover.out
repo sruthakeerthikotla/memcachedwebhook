@@ -1,0 +1,3 @@
+mode: set
+github.com/example-inc/memcached-operator/controllers/memcached_controller.go:40.80,47.2 3 0
+github.com/example-inc/memcached-operator/controllers/memcached_controller.go:49.72,53.2 1 0
