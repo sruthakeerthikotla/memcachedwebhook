@@ -291,59 +291,6 @@ oc apply --validate=false -f https://github.com/jetstack/cert-manager/releases/d
 
 The certficate and issuer details can be found in `config/certmanager/certificate.yaml`. 
 
-The certificate secret has to be added as a `volume` to the path `/tmp/k8s-webhook-server/serving-certs` using a `volumemount` in the operator's deployment. Hence, add this in the file `config/manager/manager.yaml`. The modified file would be as below :
-
-```
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    control-plane: controller-manager
-  name: system
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: controller-manager
-  namespace: system
-  labels:
-    control-plane: controller-manager
-spec:
-  selector:
-    matchLabels:
-      control-plane: controller-manager
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        control-plane: controller-manager
-    spec:
-      containers:
-      - command:
-        - /manager
-        args:
-        - --enable-leader-election
-        image: controller:latest
-        name: manager
-        resources:
-          limits:
-            cpu: 100m
-            memory: 30Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
-        volumeMounts:
-        - mountPath: /tmp/k8s-webhook-server/serving-certs
-          name: cert
-      terminationGracePeriodSeconds: 10
-      volumes:
-        - name: cert
-          secret:
-            defaultMode: 420
-            secretName: webhook-server-cert
-
-```
-
 Now build your operator image, push the to a repository and deploy it to your cluster using the same commands like for the sample operator above, i.e. 
 
 ```
