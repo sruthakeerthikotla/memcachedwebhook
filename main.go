@@ -67,6 +67,19 @@ func main() {
 		os.Exit(1)
 	}
 
+	const (
+		WebhookPort     = 4343
+		WebhookCertDir  = "/apiserver.local.config/certificates"
+		WebhookCertName = "apiserver.crt"
+		WebhookKeyName  = "apiserver.key"
+	)
+
+	srv := mgr.GetWebhookServer()
+	srv.CertDir = WebhookCertDir
+	srv.CertName = WebhookCertName
+	srv.KeyName = WebhookKeyName
+	srv.Port = WebhookPort
+
 	if err = (&controllers.MemcachedReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Memcached"),

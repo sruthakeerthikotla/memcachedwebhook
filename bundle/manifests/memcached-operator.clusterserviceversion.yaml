@@ -1,0 +1,230 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "cache.example.com/v1",
+          "kind": "Memcached",
+          "metadata": {
+            "name": "memcached-sample"
+          },
+          "spec": {
+            "foo": "bar"
+          }
+        }
+      ]
+    capabilities: Basic Install
+    operators.operatorframework.io/builder: operator-sdk-v1.0.0
+    operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
+  name: memcached-operator.v0.0.1
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Memcached is the Schema for the memcacheds API
+      displayName: Memcached
+      kind: Memcached
+      name: memcacheds.cache.example.com
+      version: v1
+  description: This is a sample Memcached operator
+  displayName: Memcached operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - admissionregistration.k8s.io
+          resources:
+          - mutatingwebhookconfigurations
+          - validatingwebhookconfigurations
+          verbs:
+          - get
+          - create
+          - update
+          - patch
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          - persistent-volumes
+          - services
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - update
+          - patch
+          - update
+        - apiGroups:
+          - cache.example.com
+          resources:
+          - memcacheds
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - cache.example.com
+          resources:
+          - memcacheds/status
+          verbs:
+          - get
+          - patch
+          - update
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - tokenreviews
+          verbs:
+          - create
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - subjectaccessreviews
+          verbs:
+          - create
+        serviceAccountName: default
+      deployments:
+      - name: memcached-operator-controller-manager
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              control-plane: controller-manager
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                control-plane: controller-manager
+            spec:
+              containers:
+              - args:
+                - --metrics-addr=127.0.0.1:8080
+                - --enable-leader-election
+                command:
+                - /manager
+                image: quay.io/srkotla/memcached:v77
+                name: manager
+                ports:
+                - containerPort: 9443
+                  name: webhook-server
+                  protocol: TCP
+                resources:
+                  limits:
+                    cpu: 100m
+                    memory: 30Mi
+                  requests:
+                    cpu: 100m
+                    memory: 20Mi
+              - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                resources: {}
+              terminationGracePeriodSeconds: 10
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps/status
+          verbs:
+          - get
+          - update
+          - patch
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: default
+    strategy: deployment
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - memcached
+  links:
+  - name: Memcached Operator
+    url: https://memcached-operator.domain
+  maturity: alpha
+  provider:
+    name: Srutha
+    url: '-'
+  version: 0.0.1
+  webhookdefinitions:
+  - admissionReviewVersions: ["v1"]
+    deploymentName: memcached-operator-controller-manager
+    failurePolicy: Fail
+    generateName: vmemcached.kb.io
+    rules:
+    - apiGroups:
+      - cache.example.com
+      apiVersions:
+      - v1
+      operations:
+      - CREATE
+      - UPDATE
+      resources:
+      - memcacheds
+    sideEffects: None
+    type: ValidatingAdmissionWebhook
+    webhookPath: /validate-cache-example-com-v1-memcached
+    containerPort: 4343
+    targetPort: 4343
+  - admissionReviewVersions: ["v1"]
+    deploymentName: memcached-operator-controller-manager
+    failurePolicy: Fail
+    generateName: mmemcached.kb.io
+    rules:
+    - apiGroups:
+      - cache.example.com
+      apiVersions:
+      - v1
+      operations:
+      - CREATE
+      - UPDATE
+      resources:
+      - memcacheds
+    sideEffects: None
+    type: MutatingAdmissionWebhook
+    webhookPath: /mutate-cache-example-com-v1-memcached
+    containerPort: 4343
+    targetPort: 4343
