@@ -185,7 +185,7 @@ spec:
     webhookPath: /validate-cache-example-com-v1-memcached
     containerPort: 4343
     targetPort: 4343
-  - admissionReviewVersions: ["v1"]
+  - admissionReviewVersions: ["v1alpha1"]
     deploymentName: memcached-operator-controller-manager
     failurePolicy: Fail
     generateName: mmemcached.kb.io
