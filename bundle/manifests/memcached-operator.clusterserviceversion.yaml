@@ -39,30 +39,6 @@ spec:
       clusterPermissions:
       - rules:
         - apiGroups:
-          - admissionregistration.k8s.io
-          resources:
-          - mutatingwebhookconfigurations
-          - validatingwebhookconfigurations
-          verbs:
-          - get
-          - create
-          - update
-          - patch
-        - apiGroups:
-          - ""
-          resources:
-          - secrets
-          - persistent-volumes
-          - services
-          verbs:
-          - create
-          - delete
-          - get
-          - list
-          - update
-          - patch
-          - update
-        - apiGroups:
           - cache.example.com
           resources:
           - memcacheds
@@ -114,7 +90,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/srkotla/memcached:v77
+                image: <my memcached operator image>
                 name: manager
                 ports:
                 - containerPort: 9443
